@@ -32,9 +32,9 @@ extra-source-files:
   HLint.hs
   stack.yaml
 
--- data-files:
-
---  data/
+data-files:
+  data/AllCards.json 
+  data/SomeCards.json
 
 source-repository head
   type:     git
@@ -72,6 +72,11 @@ library
                  Card.Extra
                  Card.Example
 
+ other-modules: 
+                 Paths_magic_card_search
+-- autogen-modules: 
+--                 Paths_magic_card_search
+
  build-depends:
                base >=4.7 && <5
 
@@ -83,8 +88,8 @@ library
 
 --              , transformers
 --              , mtl
---              , containers
---              , bytestring
+             , containers
+             , bytestring
 --              , stm
 --              , template-haskell
 
@@ -101,8 +106,8 @@ library
 --              , split
 --              , interpolatedstring-perl6
 --              , wl-pprint-text
---              , text
---              , aeson
+             , text
+             , aeson
 --              , unordered-containers
 --              , async
 --              , parallel

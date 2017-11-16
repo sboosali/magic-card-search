@@ -19,3 +19,7 @@ extra-deps:
 
 # extra-deps: 
 # - spiros-0.0.0
+
+flags: 
+  fltkhs: 
+    bundled: true 
