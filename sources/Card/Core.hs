@@ -2,17 +2,20 @@
 module Card.Core where
 import Card.Extra
 import Card.Types() 
+import Paths_magic_card_search 
 
 import Data.Aeson 
 
-import Prelude.Spiros() 
+import Prelude.Spiros
 
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8 
-import Paths_magic_card_search 
+import qualified Data.Map as M 
 
 cardFile :: FilePath
-cardFile = "data/SomeCards.json"
+cardFile = "data/AllCards.json"
 
 getCards :: IO B.ByteString
 getCards = getDataFileName cardFile >>= B.readFile 
@@ -21,6 +24,20 @@ printCards = getCards >>= B8.putStrLn
 
 parseCards :: B.ByteString -> Either String Value  
 parseCards b = eitherDecode b 
+
+indexCards :: B.ByteString -> Either String (M.Map T.Text Value)
+indexCards b = eitherDecode b <&> M.mapKeys T.toCaseFold 
+
+readUntilEmpty :: (T.Text -> IO ()) -> IO ()
+readUntilEmpty f = go
+ where 
+  go = do
+    t <- T.getLine  
+    if T.null t 
+    then nothing 
+    else do
+       f t
+       go
 
 {- | on Windows, some applications like Notepad obnoxiously prefix the file contents with a Byte Order Mark (I think). 
 

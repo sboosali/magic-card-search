@@ -1,10 +1,12 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-} -- to test inference
-{-# LANGUAGE LambdaCase #-} 
+{-# LANGUAGE LambdaCase, OverloadedStrings #-} 
 
 module Card.Example where
 import Card
 import System.Environment
 import Data.Function((&)) 
+import qualified Data.Map as M 
+import qualified Data.Text as T
 
 {-|
 @
@@ -93,9 +95,19 @@ mainWith _ = do
  putStrLn "" 
 
  s <- getCards 
- parseCards s & \case
-    Left e -> putStrLn e
-    Right j -> do
-      print j
+ 
+--  putStrLn "" 
+--  parseCards s & \case
+--     Left e -> putStrLn e
+--     Right j -> do
+--       print j
+
  putStrLn "" 
+ indexCards s & \case
+    Left e -> putStrLn e
+    Right m -> do
+      readUntilEmpty $ \t -> do
+        let k = t & T.toCaseFold & T.words & T.unwords -- & T.splitOn " " & T.intercalate " " & T.toCaseFold
+        let v = M.lookup k m
+        print v 
 
