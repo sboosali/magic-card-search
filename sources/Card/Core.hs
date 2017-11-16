@@ -1,4 +1,4 @@
-{-# LANGUAGE NoImplicitPrelude, RecordWildCards, OverloadedStrings  #-}
+{-# LANGUAGE NoImplicitPrelude, RecordWildCards, OverloadedStrings, TypeApplications #-}
 module Card.Core where
 import Card.Extra
 import Card.Types() 
@@ -20,6 +20,7 @@ import Control.Concurrent
 import Control.Concurrent.Async.Pool
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS
+import Control.Exception(handle) 
 
 data CardIdentifier = CardIdentifier 
   { cardLanguage :: Language  -- TODO 
@@ -46,20 +47,24 @@ saveImagesFromMagicCardsInfo t cs = do
   go manager c = do
     putStrLn $ urlFromCardIdentifier c 
     putStrLn $ pathFromCardIdentifier c 
-    i <- downloadImageFromMagicCardsInfo manager c 
+    downloadImageFromMagicCardsInfo manager c >>= either failure (success c) 
+  failure e = print e 
+  success c i = do 
     B.writeFile (pathFromCardIdentifier c) i
     delayMilliseconds (t&fromIntegral)  -- threadDelay (fromIntegral t) 
   
-downloadImageFromMagicCardsInfo :: Manager -> CardIdentifier -> IO B.ByteString
-downloadImageFromMagicCardsInfo manager c = do 
+downloadImageFromMagicCardsInfo :: Manager -> CardIdentifier -> IO (Either HttpException B.ByteString)
+downloadImageFromMagicCardsInfo manager c = handleHttpErrors $ do 
   request <- parseUrlThrow url
   response <- httpLbs request manager
   let body = response&responseBody 
-  return body 
+  return $ Right body 
   where 
-  url = urlFromCardIdentifier c 
+  url = urlFromCardIdentifier c
+  handleHttpErrors = handle @HttpException (Left > return) 
+  -- handle $ (\(e ::HttpException) -> Left e) 
 
-{-| e.g. @@ 
+{-| e.g. @data/images/xln-en/1.jpg@ 
 
 -}
 pathFromCardIdentifier :: CardIdentifier -> FilePath 

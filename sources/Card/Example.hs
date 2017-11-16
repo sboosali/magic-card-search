@@ -92,7 +92,7 @@ main = do
   _ -> return ("")
  mainWith arguments
 
-someCardIdentifiers = fmap (defaultCardIdentifier "xln") [24..25 ] -- [1..21] -- [1..284] 
+someCardIdentifiers = fmap (defaultCardIdentifier "xln") [24..284 ] -- [1..21] -- [1..284] 
 -- TODO some, like double-faced cards, don't have numerical collector numbers. for example, there is no 22, only 22a and 22b
 -- get the real collectors numbers from the file  
 
