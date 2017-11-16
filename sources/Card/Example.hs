@@ -7,6 +7,7 @@ import System.Environment
 import Data.Function((&)) 
 import qualified Data.Map as M 
 import qualified Data.Text as T
+import qualified Data.ByteString.Lazy as B
 
 {-|
 @
@@ -94,20 +95,22 @@ mainWith _ = do
  printCards 
  putStrLn "" 
 
- s <- getCards 
- 
---  putStrLn "" 
---  parseCards s & \case
---     Left e -> putStrLn e
---     Right j -> do
---       print j
+ getConcurrently (replicate 1 "https://httpbin.org/get") >>= print
 
- putStrLn "" 
- indexCards s & \case
-    Left e -> putStrLn e
-    Right m -> do
-      readUntilEmpty $ \t -> do
-        let k = t & T.toCaseFold & T.words & T.unwords -- & T.splitOn " " & T.intercalate " " & T.toCaseFold
-        let v = M.lookup k m
-        print v 
+--  s <- getCards 
+ 
+-- --  putStrLn "" 
+-- --  parseCards s & \case
+-- --     Left e -> putStrLn e
+-- --     Right j -> do
+-- --       print j
+
+--  putStrLn "" 
+--  indexCards s & \case
+--     Left e -> putStrLn e
+--     Right m -> do
+--       readUntilEmpty $ \t -> do
+--         let k = t & T.toCaseFold & T.words & T.unwords -- & T.splitOn " " & T.intercalate " " & T.toCaseFold
+--         let v = M.lookup k m
+--         print v 
 

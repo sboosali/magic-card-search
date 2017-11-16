@@ -91,6 +91,7 @@ library
 --              , mtl
              , containers
              , bytestring
+             , binary
 --              , stm
 --              , template-haskell
 
@@ -110,9 +111,10 @@ library
              , text
              , aeson
 --              , unordered-containers
---              , async
---              , parallel
-
+            , async
+            , async-pool
+            , http-client
+            , http-client-tls
 
 executable example-magic-card-search
  hs-source-dirs:      executables

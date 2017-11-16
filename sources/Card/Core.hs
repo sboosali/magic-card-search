@@ -13,9 +13,24 @@ import qualified Data.Text.IO as T
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8 
 import qualified Data.Map as M 
+import Data.Binary
+
+import Control.Concurrent
+import Control.Concurrent.Async.Pool
+import Network.HTTP.Client
+import Network.HTTP.Client.TLS
+
+getConcurrently :: [String] -> IO [B.ByteString]
+getConcurrently urls = withManager tlsManagerSettings $ \mgr ->
+    withTaskGroup 2 $ \tg -> mapConcurrently tg (\url -> do
+        req <- parseUrl url
+        responseBody <$> httpLbs req mgr <* threadDelay 1) urls
 
 cardFile :: FilePath
-cardFile = "data/AllCards.json"
+cardFile = "data/SomeCards.json"
+
+-- encodeFile
+-- decodeFile
 
 getCards :: IO B.ByteString
 getCards = getDataFileName cardFile >>= B.readFile 
@@ -26,7 +41,7 @@ parseCards :: B.ByteString -> Either String Value
 parseCards b = eitherDecode b 
 
 indexCards :: B.ByteString -> Either String (M.Map T.Text Value)
-indexCards b = eitherDecode b <&> M.mapKeys T.toCaseFold 
+indexCards b = eitherDecode b <&> (M.mapKeys T.toCaseFold >>> M.filter (const True)) 
 
 readUntilEmpty :: (T.Text -> IO ()) -> IO ()
 readUntilEmpty f = go
