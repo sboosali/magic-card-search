@@ -8,6 +8,7 @@ import Data.Function((&))
 import qualified Data.Map as M 
 import qualified Data.Text as T
 import qualified Data.ByteString.Lazy as B
+-- import Prelude (head) 
 
 {-|
 @
@@ -91,11 +92,15 @@ main = do
   _ -> return ("")
  mainWith arguments
 
+someCardIdentifiers = fmap (defaultCardIdentifier "xln") [24..25 ] -- [1..21] -- [1..284] 
+-- TODO some, like double-faced cards, don't have numerical collector numbers. for example, there is no 22, only 22a and 22b
+-- get the real collectors numbers from the file  
+
 mainWith _ = do
- printCards 
+--  printCards 
  putStrLn "" 
 
- getConcurrently (replicate 1 "https://httpbin.org/get") >>= print
+ saveImagesFromMagicCardsInfo 1000 someCardIdentifiers  --- one second delay 
 
 --  s <- getCards 
  

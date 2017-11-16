@@ -1,4 +1,4 @@
-{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE NoImplicitPrelude, RecordWildCards, OverloadedStrings  #-}
 module Card.Core where
 import Card.Extra
 import Card.Types() 
@@ -14,17 +14,70 @@ import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8 
 import qualified Data.Map as M 
 import Data.Binary
+import Data.String (fromString) 
 
 import Control.Concurrent
 import Control.Concurrent.Async.Pool
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS
 
-getConcurrently :: [String] -> IO [B.ByteString]
-getConcurrently urls = withManager tlsManagerSettings $ \mgr ->
-    withTaskGroup 2 $ \tg -> mapConcurrently tg (\url -> do
-        req <- parseUrl url
-        responseBody <$> httpLbs req mgr <* threadDelay 1) urls
+data CardIdentifier = CardIdentifier 
+  { cardLanguage :: Language  -- TODO 
+  , cardSet      :: MagicSet 
+  , cardCollectorNumber :: CollectorNumber  
+  }
+
+type Language = String 
+
+type MagicSet = String 
+
+type CollectorNumber = Natural 
+
+defaultCardIdentifier :: MagicSet -> CollectorNumber -> CardIdentifier 
+defaultCardIdentifier cardSet cardCollectorNumber = CardIdentifier{..}
+  where 
+  cardLanguage = "en" 
+
+saveImagesFromMagicCardsInfo :: Natural -> [CardIdentifier] -> IO () 
+saveImagesFromMagicCardsInfo t cs = do 
+  manager <- newManager tlsManagerSettings
+  traverse_ (go manager) (reverse cs) 
+  where 
+  go manager c = do
+    putStrLn $ urlFromCardIdentifier c 
+    putStrLn $ pathFromCardIdentifier c 
+    i <- downloadImageFromMagicCardsInfo manager c 
+    B.writeFile (pathFromCardIdentifier c) i
+    delayMilliseconds (t&fromIntegral)  -- threadDelay (fromIntegral t) 
+  
+downloadImageFromMagicCardsInfo :: Manager -> CardIdentifier -> IO B.ByteString
+downloadImageFromMagicCardsInfo manager c = do 
+  request <- parseUrlThrow url
+  response <- httpLbs request manager
+  let body = response&responseBody 
+  return body 
+  where 
+  url = urlFromCardIdentifier c 
+
+{-| e.g. @@ 
+
+-}
+pathFromCardIdentifier :: CardIdentifier -> FilePath 
+pathFromCardIdentifier CardIdentifier{..} 
+  = "data/images/" <> cardSet <> "-" <> cardLanguage <> "/" <> show cardCollectorNumber <> ".jpg" 
+
+{-| e.g. @https://magiccards.info/scans/en/xln/1.jpg@ 
+
+-}
+urlFromCardIdentifier :: CardIdentifier -> String 
+urlFromCardIdentifier CardIdentifier{..} 
+  = "https://magiccards.info/scans/"<> cardLanguage<>"/" <> cardSet <>"/"<> (show cardCollectorNumber)<>".jpg" 
+--   = fromString $ "https://magiccards.info/scans/"<> fromString cardLanguage<>"/" <> fromString cardSet <>"/"<>fromString (show cardCollectorNumber)<>".jpg" 
+  
+-- = withManager tlsManagerSettings $ \mgr ->
+--     withTaskGroup 2 $ \tg -> mapConcurrently tg (\url -> do
+--         req <- parseUrl url
+--         responseBody <$> httpLbs req mgr <* threadDelay 1) urls
 
 cardFile :: FilePath
 cardFile = "data/SomeCards.json"

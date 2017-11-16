@@ -1,0 +1,120 @@
+[1mdiff --git a/sources/Card/Core.hs b/sources/Card/Core.hs[m
+[1mindex 70cdbe9..78de12c 100644[m
+[1m--- a/sources/Card/Core.hs[m
+[1m+++ b/sources/Card/Core.hs[m
+[36m@@ -1,4 +1,4 @@[m
+[31m-{-# LANGUAGE NoImplicitPrelude #-}[m
+[32m+[m[32m{-# LANGUAGE NoImplicitPrelude, RecordWildCards, OverloadedStrings  #-}[m
+ module Card.Core where[m
+ import Card.Extra[m
+ import Card.Types() [m
+[36m@@ -14,17 +14,70 @@[m [mimport qualified Data.ByteString.Lazy as B[m
+ import qualified Data.ByteString.Lazy.Char8 as B8 [m
+ import qualified Data.Map as M [m
+ import Data.Binary[m
+[32m+[m[32mimport Data.String (fromString)[m[41m [m
+ [m
+ import Control.Concurrent[m
+ import Control.Concurrent.Async.Pool[m
+ import Network.HTTP.Client[m
+ import Network.HTTP.Client.TLS[m
+ [m
+[31m-getConcurrently :: [String] -> IO [B.ByteString][m
+[31m-getConcurrently urls = withManager tlsManagerSettings $ \mgr ->[m
+[31m-    withTaskGroup 2 $ \tg -> mapConcurrently tg (\url -> do[m
+[31m-        req <- parseUrl url[m
+[31m-        responseBody <$> httpLbs req mgr <* threadDelay 1) urls[m
+[32m+[m[32mdata CardIdentifier = CardIdentifier[m[41m [m
+[32m+[m[32m  { cardLanguage :: Language  -- TODO[m[41m [m
+[32m+[m[32m  , cardSet      :: MagicSet[m[41m [m
+[32m+[m[32m  , cardCollectorNumber :: CollectorNumber[m[41m  [m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32mtype Language = String[m[41m [m
+[32m+[m
+[32m+[m[32mtype MagicSet = String[m[41m [m
+[32m+[m
+[32m+[m[32mtype CollectorNumber = Natural[m[41m [m
+[32m+[m
+[32m+[m[32mdefaultCardIdentifier :: MagicSet -> CollectorNumber -> CardIdentifier[m[41m [m
+[32m+[m[32mdefaultCardIdentifier cardSet cardCollectorNumber = CardIdentifier{..}[m
+[32m+[m[32m  where[m[41m [m
+[32m+[m[32m  cardLanguage = "en"[m[41m [m
+[32m+[m
+[32m+[m[32msaveImagesFromMagicCardsInfo :: Natural -> [CardIdentifier] -> IO ()[m[41m [m
+[32m+[m[32msaveImagesFromMagicCardsInfo t cs = do[m[41m [m
+[32m+[m[32m  manager <- newManager tlsManagerSettings[m
+[32m+[m[32m  traverse_ (go manager) (reverse cs)[m[41m [m
+[32m+[m[32m  where[m[41m [m
+[32m+[m[32m  go manager c = do[m
+[32m+[m[32m    putStrLn $ urlFromCardIdentifier c[m[41m [m
+[32m+[m[32m    putStrLn $ pathFromCardIdentifier c[m[41m [m
+[32m+[m[32m    i <- downloadImageFromMagicCardsInfo manager c[m[41m [m
+[32m+[m[32m    B.writeFile (pathFromCardIdentifier c) i[m
+[32m+[m[32m    delayMilliseconds (t&fromIntegral)  -- threadDelay (fromIntegral t)[m[41m [m
+[32m+[m[41m  [m
+[32m+[m[32mdownloadImageFromMagicCardsInfo :: Manager -> CardIdentifier -> IO B.ByteString[m
+[32m+[m[32mdownloadImageFromMagicCardsInfo manager c = do[m[41m [m
+[32m+[m[32m  request <- parseUrlThrow url[m
+[32m+[m[32m  response <- httpLbs request manager[m
+[32m+[m[32m  let body = response&responseBody[m[41m [m
+[32m+[m[32m  return body[m[41m [m
+[32m+[m[32m  where[m[41m [m
+[32m+[m[32m  url = urlFromCardIdentifier c[m[41m [m
+[32m+[m
+[32m+[m[32m{-| e.g. @@[m[41m [m
+[32m+[m
+[32m+[m[32m-}[m
+[32m+[m[32mpathFromCardIdentifier :: CardIdentifier -> FilePath[m[41m [m
+[32m+[m[32mpathFromCardIdentifier CardIdentifier{..}[m[41m [m
+[32m+[m[32m  = "data/images/" <> cardSet <> "-" <> cardLanguage <> "/" <> show cardCollectorNumber <> ".jpg"[m[41m [m
+[32m+[m
+[32m+[m[32m{-| e.g. @https://magiccards.info/scans/en/xln/1.jpg@[m[41m [m
+[32m+[m
+[32m+[m[32m-}[m
+[32m+[m[32murlFromCardIdentifier :: CardIdentifier -> String[m[41m [m
+[32m+[m[32murlFromCardIdentifier CardIdentifier{..}[m[41m [m
+[32m+[m[32m  = "https://magiccards.info/scans/"<> cardLanguage<>"/" <> cardSet <>"/"<> (show cardCollectorNumber)<>".jpg"[m[41m [m
+[32m+[m[32m--   = fromString $ "https://magiccards.info/scans/"<> fromString cardLanguage<>"/" <> fromString cardSet <>"/"<>fromString (show cardCollectorNumber)<>".jpg"[m[41m [m
+[32m+[m[41m  [m
+[32m+[m[32m-- = withManager tlsManagerSettings $ \mgr ->[m
+[32m+[m[32m--   warning: LF will be replaced by CRLF in sources/Card/Core.hs.
+The file will have its original line endings in your working directory.
+  withTaskGroup 2 $ \tg -> mapConcurrently tg (\url -> do[m
+[32m+[m[32m--         req <- parseUrl url[m
+[32m+[m[32m--         responseBody <$> httpLbs req mgr <* threadDelay 1) urls[m
+ [m
+ cardFile :: FilePath[m
+ cardFile = "data/SomeCards.json"[m
+[1mdiff --git a/sources/Card/Example.hs b/sources/Card/Example.hs[m
+[1mindex bd4b7d7..d19d0d8 100644[m
+[1m--- a/sources/Card/Example.hs[m
+[1m+++ b/sources/Card/Example.hs[m
+[36m@@ -8,6 +8,7 @@[m [mimport Data.Function((&))[m
+ import qualified Data.Map as M [m
+ import qualified Data.Text as T[m
+ import qualified Data.ByteString.Lazy as B[m
+[32m+[m[32m-- import Prelude (head)[m[41m [m
+ [m
+ {-|[m
+ @[m
+[36m@@ -91,11 +92,15 @@[m [mmain = do[m
+   _ -> return ("")[m
+  mainWith arguments[m
+ [m
+[32m+[m[32msomeCardIdentifiers = fmap (defaultCardIdentifier "xln") [24..25 ] -- [1..21] -- [1..284][m[41m [m
+[32m+[m[32m-- TODO some, like double-faced cards, don't have numerical collector numbers. for example, there is no 22, only 22a and 22b[m
+[32m+[m[32m-- get the real collectors numbers from the file[m[41m  [m
+[32m+[m
+ mainWith _ = do[m
+[31m- printCards [m
+[32m+[m[32m--  printCards[m[41m [m
+  putStrLn "" [m
+ [m
+[31m- getConcurrently (replicate 1 "https://httpbin.org/get") >>= print[m
+[32m+[m[32m saveImagesFromMagicCardsInfo 1000 someCardIdentifiers  --- one second delay[m[41m [m
+ [m
+ --  s <- getCards [m
+  [m
+warning: LF will be replaced by CRLF in sources/Card/Example.hs.
+The file will have its original line endings in your working directory.
