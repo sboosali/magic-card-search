@@ -1,7 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-} -- to test inference
+{-# LANGUAGE LambdaCase #-} 
+
 module Card.Example where
 import Card
 import System.Environment
+import Data.Function((&)) 
 
 {-|
 @
@@ -77,7 +80,6 @@ or with slightly tighter invariants as:
 @ 
 
 
-
 -}
 main :: IO ()
 main = do
@@ -86,7 +88,14 @@ main = do
   _ -> return ("")
  mainWith arguments
 
-mainWith s = do
- putStrLn s
+mainWith _ = do
  printCards 
- -- getCards parseCards 
+ putStrLn "" 
+
+ s <- getCards 
+ parseCards s & \case
+    Left e -> putStrLn e
+    Right j -> do
+      print j
+ putStrLn "" 
+
