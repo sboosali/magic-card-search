@@ -9,6 +9,8 @@ import qualified Data.Map as M
 import qualified Data.Text as T
 import qualified Data.ByteString.Lazy as B
 -- import Prelude (head) 
+import Control.Lens hiding ((<&>)) 
+import Data.Aeson.Lens
 
 {-|
 @
@@ -97,18 +99,30 @@ someCardIdentifiers = fmap (defaultCardIdentifier "xln") [24..284 ] -- [1..21] -
 -- get the real collectors numbers from the file  
 
 mainWith _ = do
---  printCards 
  putStrLn "" 
 
- saveImagesFromMagicCardsInfo 1000 someCardIdentifiers  --- one second delay 
+ s <- getSets  
+ putStrLn ""
+ parseSets s & \case
+    Left e -> putStrLn e
+    Right sets -> do
+      print sets 
+      putStrLn ""
+      let cards = sets ^.. rCardNames 
+      print cards 
 
---  s <- getCards 
- 
--- --  putStrLn "" 
--- --  parseCards s & \case
--- --     Left e -> putStrLn e
--- --     Right j -> do
--- --       print j
+
+
+
+ -- saveImagesFromMagicCardsInfo 1000 someCardIdentifiers  --- one second delay 
+
+--  s <- getCards  
+--  putStrLn ""
+--  parseCards s & \case
+--     Left e -> putStrLn e
+--     Right j -> do
+--       putStrLn ""
+--       print j
 
 --  putStrLn "" 
 --  indexCards s & \case

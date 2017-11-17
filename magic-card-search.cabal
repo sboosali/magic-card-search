@@ -32,10 +32,19 @@ extra-source-files:
   HLint.hs
   stack.yaml
 
+
 data-files:
   data/AllCards.json 
   data/SomeCards.json
   data/NoCards.json
+
+  data/AllSets-x.json
+  data/SomeSets-x.json
+  data/OneCard-x.json
+
+  data/version-full.json 
+  data/SetList.json
+
 
 source-repository head
   type:     git
@@ -110,6 +119,7 @@ library
 --              , wl-pprint-text
              , text
              , aeson
+             , lens-aeson
 --              , unordered-containers
             , async
             , async-pool
