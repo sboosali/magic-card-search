@@ -19,7 +19,7 @@ import Control.Lens hiding ((<&>))
 import Data.Aeson.Lens
 
 import Control.Concurrent
-import Control.Concurrent.Async.Pool
+-- import Control.Concurrent.Async.Pool
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS
 import Control.Exception(handle) 
@@ -97,9 +97,12 @@ Object (fromList [("mciNumber",String "229"),("layout",String "normal"),("text",
 
 
 
-data CardIdentifier = CardIdentifier 
-  { cardLanguage :: Language  -- TODO 
-  , cardSet      :: MagicSetCode 
+{-| magiccards.info
+
+-}
+data MCICardIdentifier = MCICardIdentifier 
+  { cardLanguage        :: Language  -- TODO 
+  , cardSet             :: MagicSetCode 
   , cardCollectorNumber :: CollectorNumber  
   }
 
@@ -109,48 +112,48 @@ type MagicSetCode = String
 
 type CollectorNumber = Natural 
 
-defaultCardIdentifier :: MagicSetCode -> CollectorNumber -> CardIdentifier 
-defaultCardIdentifier cardSet cardCollectorNumber = CardIdentifier{..}
+defaultMCICardIdentifier :: MagicSetCode -> CollectorNumber -> MCICardIdentifier 
+defaultMCICardIdentifier cardSet cardCollectorNumber = MCICardIdentifier{..}
   where 
   cardLanguage = "en" 
 
-saveImagesFromMagicCardsInfo :: Natural -> [CardIdentifier] -> IO () 
+saveImagesFromMagicCardsInfo :: Natural -> [MCICardIdentifier] -> IO () 
 saveImagesFromMagicCardsInfo t cs = do 
   manager <- newManager tlsManagerSettings
   traverse_ (go manager) (reverse cs) 
   where 
   go manager c = do
-    putStrLn $ urlFromCardIdentifier c 
-    putStrLn $ pathFromCardIdentifier c 
+    putStrLn $ urlFromMCICardIdentifier c 
+    putStrLn $ pathFromMCICardIdentifier c 
     downloadImageFromMagicCardsInfo manager c >>= either failure (success c) 
   failure e = print e 
   success c i = do 
-    B.writeFile (pathFromCardIdentifier c) i
+    B.writeFile (pathFromMCICardIdentifier c) i
     delayMilliseconds (t&fromIntegral)  -- threadDelay (fromIntegral t) 
   
-downloadImageFromMagicCardsInfo :: Manager -> CardIdentifier -> IO (Either HttpException B.ByteString)
+downloadImageFromMagicCardsInfo :: Manager -> MCICardIdentifier -> IO (Either HttpException B.ByteString)
 downloadImageFromMagicCardsInfo manager c = handleHttpErrors $ do 
   request <- parseUrlThrow url
   response <- httpLbs request manager
   let body = response&responseBody 
   return $ Right body 
   where 
-  url = urlFromCardIdentifier c
+  url = urlFromMCICardIdentifier c
   handleHttpErrors = handle @HttpException (Left > return) 
   -- handle $ (\(e ::HttpException) -> Left e) 
 
 {-| e.g. @data/images/xln-en/1.jpg@ 
 
 -}
-pathFromCardIdentifier :: CardIdentifier -> FilePath 
-pathFromCardIdentifier CardIdentifier{..} 
+pathFromMCICardIdentifier :: MCICardIdentifier -> FilePath 
+pathFromMCICardIdentifier MCICardIdentifier{..} 
   = "data/images/" <> cardSet <> "-" <> cardLanguage <> "/" <> show cardCollectorNumber <> ".jpg" 
 
 {-| e.g. @https://magiccards.info/scans/en/xln/1.jpg@ 
 
 -}
-urlFromCardIdentifier :: CardIdentifier -> String 
-urlFromCardIdentifier CardIdentifier{..} 
+urlFromMCICardIdentifier :: MCICardIdentifier -> String 
+urlFromMCICardIdentifier MCICardIdentifier{..} 
   = "https://magiccards.info/scans/"<> cardLanguage<>"/" <> cardSet <>"/"<> (show cardCollectorNumber)<>".jpg" 
 --   = fromString $ "https://magiccards.info/scans/"<> fromString cardLanguage<>"/" <> fromString cardSet <>"/"<>fromString (show cardCollectorNumber)<>".jpg" 
   
@@ -188,6 +191,10 @@ rCardNames :: Traversal' MagicSet T.Text -- MagicCard
 rCardNames = (key "LEA" . key "cards" . values . key "name" . _String )
 -- rCardNames = (key "lea" . key "cards" . _Object . key "name")
  
+{-| filter sets for validity. 
+for each valid set, for each of its cards, pair it it's collectors number. 
+
+-}
 
 
 ---
