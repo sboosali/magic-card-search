@@ -11,6 +11,7 @@ cbits/main
 .projectile
 
 # Haskell
+ghcid.txt
 cabal.project.local
 dist-newstyle/
 dist/

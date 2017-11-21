@@ -1,6 +1,7 @@
 module Card.Test where
-import Card
+import Card() 
 
+main :: IO ()
 main = do
  print "Card"
 

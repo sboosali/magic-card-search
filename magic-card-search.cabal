@@ -40,6 +40,7 @@ data-files:
 
   data/AllSets-x.json
   data/SomeSets-x.json
+  data/OneSet-x.json
   data/OneCard-x.json
 
   data/version-full.json 
@@ -78,7 +79,8 @@ library
  exposed-modules:
                  Card
                  Card.Types
-                 Card.Core		 
+                 Card.Core	
+                 Card.Schema 
 -- other-modules:
                  Card.Extra
                  Card.Example
@@ -92,6 +94,7 @@ library
                base >=4.7 && <5
 
              , spiros
+             , enumerate 
 
              , deepseq
              , hashable
@@ -108,6 +111,7 @@ library
 --              , template-haskell
 
              , directory
+             , time 
 
              , lens
 --              , exceptions
@@ -131,8 +135,11 @@ library
              , http-client
              , http-client-tls
              
-             -- , vinyl 
-             -- , composite-aeson
+             , vinyl 
+             , generic-lens
+            --  , composite-aeson
+            --  , composite-base 
+            --  , aeson-better-errors
 
 executable example-magic-card-search
  hs-source-dirs:      executables

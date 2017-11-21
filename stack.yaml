@@ -6,14 +6,13 @@ packages:
 
 extra-deps:
 - spiros-0.0.0
+- enumerate-0.2.2
 
 - fltkhs-0.5.4.1
 - text-1.2.2.0
-- async-pool-0.9.0.2
-- prettyprinter-1.1.1
+# - prettyprinter-1.1.1
 - lens-aeson-1.0.2
-- composite-aeson-0.5.3.0 
-- composite-base-0.5.3.0
+- generic-lens-0.4.1.0
 
 # resolver: lts-9.12
 # compiler: ghc-8.0.2
@@ -28,3 +27,5 @@ extra-deps:
 flags: 
   fltkhs: 
     bundled: true 
+
+# # -fobject-code -ferror-spans

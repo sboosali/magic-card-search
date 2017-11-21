@@ -8,15 +8,22 @@ import System.Environment
 -- import qualified Data.Map as M 
 -- import qualified Data.Text as T
 -- import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy.Char8 as B8 
 -- import Prelude (head) 
 -- import Control.Lens hiding ((<&>)) 
-import Data.Aeson
+-- import Data.Aeson
 -- import Data.Aeson.Lens
 -- import qualified Data.HashMap.Strict as H 
 -- import Data.HashMap.Strict  (HashMap) 
 -- import Data.Maybe 
 -- import qualified Data.Vector as V 
 -- import Control.Arrow((>>>)) 
+
+
+printAllSets = getSetsDefault >>= B8.putStrLn
+
+printAllCards = getCardsDefault >>= B8.putStrLn
+
 
 {-|
 @
@@ -106,8 +113,9 @@ someMCICardIdentifiers = fmap (defaultMCICardIdentifier "xln") [24..284 ] -- [1.
 
 mainWith _ = do
     putStrLn "" 
-    print $ exampleDecoding1 
-    print $ exampleDecoding2 
+
+    -- print $ exampleDecoding1 
+    -- print $ exampleDecoding2 
 
 --  bc <- getOneCard 
 --  putStrLn ""

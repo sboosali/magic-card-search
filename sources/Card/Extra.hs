@@ -12,7 +12,7 @@ module Card.Extra
 
 import Prelude.Spiros 
 import Data.Aeson (defaultOptions, genericParseJSON) 
-import Data.Aeson.Types (FromJSON(..),Options(..)) 
+import Data.Aeson.Types (Options(..)) 
 import qualified Data.Aeson as J 
 import qualified Data.Aeson.Types  as J
 
@@ -29,7 +29,7 @@ only @a@ and @name@ are relevant.
 type IsDataType a name m p t f
  = ( Generic a
    , KnownSymbol name
-   , (Rep a) ~ (M1 D (MetaData name m p t) f)
+   , (Rep a) ~ (M1 D ('MetaData name m p t) f)
    ) 
 
 {-| my naminimport g convention for types that are json schemas.

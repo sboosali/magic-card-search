@@ -2,16 +2,17 @@
 module Card.Core where
 import Card.Extra
 import Card.Types
+import Card.Schema 
 import Paths_magic_card_search 
 
 import Data.Aeson 
 
-import Prelude.Spiros
+import Prelude.Spiros() 
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import qualified Data.ByteString.Lazy as B
-import qualified Data.ByteString.Lazy.Char8 as B8 
+-- import qualified Data.ByteString.Lazy.Char8 as B8 
 import qualified Data.Map as M 
 -- import Data.Binary
 -- import Data.String (fromString) 
@@ -182,8 +183,6 @@ getSomeSets = getDataFileName "data/SomeSets-x.json" >>= B.readFile
 getSetsDefault :: IO B.ByteString
 getSetsDefault = getDataFileName defaultSetsFile >>= B.readFile 
 
-printAllSets = getSetsDefault >>= B8.putStrLn
-
 parseSets :: B.ByteString -> Either String Value  
 parseSets b = eitherDecode b 
 
@@ -216,8 +215,6 @@ getOneCard = getDataFileName "data/OneCard-x.json" >>= B.readFile
 
 getCardsDefault :: IO B.ByteString
 getCardsDefault = getDataFileName defaultCardsFile >>= B.readFile 
-
-printAllCards = getCardsDefault >>= B8.putStrLn
 
 parseCards :: B.ByteString -> Either String Value  
 parseCards b = eitherDecode b 
@@ -264,7 +261,7 @@ stripByteOrderMark b = B.drop 3 b
 --------------------------------------------------------------------------------
 
 validateSet :: SetObject -> Either String SetData 
-validateSet o = Left "" 
+validateSet _o = Left "" 
 
 validateCard :: CardObject -> Either String CardData 
-validateCard o = Left "" 
+validateCard _o = Left "" 
