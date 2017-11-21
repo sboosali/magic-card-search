@@ -4,18 +4,19 @@
 module Card.Example where
 import Card
 import System.Environment
-import Data.Function((&)) 
-import qualified Data.Map as M 
-import qualified Data.Text as T
-import qualified Data.ByteString.Lazy as B
+-- import Data.Function((&)) 
+-- import qualified Data.Map as M 
+-- import qualified Data.Text as T
+-- import qualified Data.ByteString.Lazy as B
 -- import Prelude (head) 
-import Control.Lens hiding ((<&>)) 
-import Data.Aeson.Lens
-import qualified Data.HashMap.Strict as H 
-import Data.HashMap.Strict  (HashMap) 
-import Data.Maybe 
-import qualified Data.Vector as V 
-import Control.Arrow((>>>)) 
+-- import Control.Lens hiding ((<&>)) 
+import Data.Aeson
+-- import Data.Aeson.Lens
+-- import qualified Data.HashMap.Strict as H 
+-- import Data.HashMap.Strict  (HashMap) 
+-- import Data.Maybe 
+-- import qualified Data.Vector as V 
+-- import Control.Arrow((>>>)) 
 
 {-|
 @
@@ -104,17 +105,29 @@ someMCICardIdentifiers = fmap (defaultMCICardIdentifier "xln") [24..284 ] -- [1.
 -- get the real collectors numbers from the file  
 
 mainWith _ = do
- putStrLn "" 
+    putStrLn "" 
+    print $ exampleDecoding1 
+    print $ exampleDecoding2 
 
- s <- getSets  
- putStrLn ""
- parseSets s & \case
-    Left e -> putStrLn e
-    Right sets -> do
-      print sets 
-      putStrLn ""
-      let cards = sets ^.. rCardNames 
-      print cards 
+--  bc <- getOneCard 
+--  putStrLn ""
+--  let c :: Either String CardObject = eitherDecode' bc
+--  print c 
+
+--  bs <- getSetsDefault -- getOneSet 
+--  putStrLn ""
+--  let s :: Either String SetsObject = eitherDecode' bs
+--  print s
+
+--  s <- getSets  
+--  putStrLn ""
+--  parseSets s & \case
+--     Left e -> putStrLn e
+--     Right sets -> do
+--       print sets 
+--       putStrLn ""
+--       let cards = sets ^.. rCardNames 
+--       print cards 
 
 --  putStrLn "" 
 --  indexSets s & \case

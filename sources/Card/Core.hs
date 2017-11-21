@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude, RecordWildCards, OverloadedStrings, TypeApplications #-}
 module Card.Core where
 import Card.Extra
-import Card.Types() 
+import Card.Types
 import Paths_magic_card_search 
 
 import Data.Aeson 
@@ -13,12 +13,12 @@ import qualified Data.Text.IO as T
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8 
 import qualified Data.Map as M 
-import Data.Binary
-import Data.String (fromString) 
+-- import Data.Binary
+-- import Data.String (fromString) 
 import Control.Lens hiding ((<&>)) 
 import Data.Aeson.Lens
 
-import Control.Concurrent
+-- import Control.Concurrent
 -- import Control.Concurrent.Async.Pool
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS
@@ -167,16 +167,22 @@ urlFromMCICardIdentifier MCICardIdentifier{..}
 exampleSingleCardfile :: FilePath
 exampleSingleCardfile = "data/OneCard-x.json" -- 
 
-setFile :: FilePath
-setFile = "data/SomeSets-x.json" -- 
+defaultSetsFile :: FilePath
+defaultSetsFile = "data/AllSets-x.json"  
+
+getOneSet :: IO B.ByteString
+getOneSet = getDataFileName "data/OneSet-x.json" >>= B.readFile 
 
 -- encodeFile
 -- decodeFile
 
-getSets :: IO B.ByteString
-getSets = getDataFileName setFile >>= B.readFile 
+getSomeSets  :: IO B.ByteString
+getSomeSets = getDataFileName "data/SomeSets-x.json" >>= B.readFile 
 
-printSets = getSets >>= B8.putStrLn
+getSetsDefault :: IO B.ByteString
+getSetsDefault = getDataFileName defaultSetsFile >>= B.readFile 
+
+printAllSets = getSetsDefault >>= B8.putStrLn
 
 parseSets :: B.ByteString -> Either String Value  
 parseSets b = eitherDecode b 
@@ -187,8 +193,8 @@ indexSets b = eitherDecode b <&> (M.mapKeys T.toCaseFold >>> M.filter (const Tru
 type MagicSet = Value -- M.Map T.Text Value
 type MagicCard = Value 
 
-rCardNames :: Traversal' MagicSet T.Text -- MagicCard   
-rCardNames = (key "LEA" . key "cards" . values . key "name" . _String )
+rCardNames_example :: Traversal' MagicSet T.Text -- MagicCard   
+rCardNames_example = (key "LEA" . key "cards" . values . key "name" . _String )
 -- rCardNames = (key "lea" . key "cards" . _Object . key "name")
  
 {-| filter sets for validity. 
@@ -199,16 +205,19 @@ for each valid set, for each of its cards, pair it it's collectors number.
 
 ---
 
-cardFile :: FilePath
-cardFile = "data/AllCards.json" -- "data/SomeCards.json"
+defaultCardsFile :: FilePath
+defaultCardsFile = "data/AllCards.json" -- "data/SomeCards.json"
 
 -- encodeFile
 -- decodeFile
 
-getCards :: IO B.ByteString
-getCards = getDataFileName cardFile >>= B.readFile 
+getOneCard :: IO B.ByteString
+getOneCard = getDataFileName "data/OneCard-x.json" >>= B.readFile 
 
-printCards = getCards >>= B8.putStrLn
+getCardsDefault :: IO B.ByteString
+getCardsDefault = getDataFileName defaultCardsFile >>= B.readFile 
+
+printAllCards = getCardsDefault >>= B8.putStrLn
 
 parseCards :: B.ByteString -> Either String Value  
 parseCards b = eitherDecode b 
@@ -251,3 +260,11 @@ The byte-order-mark is strictly unnecessary in UTF-8, but is sometimes used to i
 -}
 stripByteOrderMark :: B.ByteString -> B.ByteString
 stripByteOrderMark b = B.drop 3 b
+
+--------------------------------------------------------------------------------
+
+validateSet :: SetObject -> Either String SetData 
+validateSet o = Left "" 
+
+validateCard :: CardObject -> Either String CardData 
+validateCard o = Left "" 
