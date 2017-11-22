@@ -27,5 +27,3 @@ extra-deps:
 flags: 
   fltkhs: 
     bundled: true 
-
-# # -fobject-code -ferror-spans

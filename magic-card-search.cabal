@@ -105,11 +105,14 @@ library
              , containers
              , unordered-containers
              , bytestring
-             , binary
              , vector 
 --              , stm
 --              , template-haskell
 
+             , binary
+--              , store 
+--              , cereal 
+             
              , directory
              , time 
 
@@ -129,6 +132,7 @@ library
              , text
              , aeson
              , lens-aeson
+             , show-prettyprint
              
              , async
              -- , async-pool

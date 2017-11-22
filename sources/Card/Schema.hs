@@ -1,18 +1,31 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE LambdaCase, DeriveAnyClass #-}
-{-# LANGUAGE DataKinds, ScopedTypeVariables  #-}
+{-# LANGUAGE DataKinds, ScopedTypeVariables, TypeApplications #-}
 
 module Card.Schema where 
 import Card.Extra
 
 import Data.Aeson.Types (FromJSON(..),Options(..), SumEncoding(..), defaultOptions, genericParseJSON) 
+
 -- import Data.Generics.Product 
+-- import qualified Control.Lens as L 
+
+import qualified Data.Binary as B 
+import Data.Binary (Binary) 
+
+-- test theName = L.set (field @"_SetObject_name") theName 
+
+persistSetsObject :: FilePath -> SetsObject -> IO ()
+persistSetsObject s o = B.encodeFile s o
+
+restoreSetsObject :: FilePath -> IO (SetsObject)
+restoreSetsObject s = B.decodeFile s 
 
 {-| 
 
 -}
 data SetsObject = SetsObject (Map Text SetObject)
-  deriving (Show,Read,Eq,Ord,Data,Generic,NFData,FromJSON) -- not Hashable 
+  deriving (Show,Read,Eq,Ord,Data,Generic,NFData,FromJSON,Binary) -- NOTE containers-Map is not Hashable 
 
 {-| 
 
@@ -30,7 +43,7 @@ data SetObject = SetObject
   , _SetObject_onlineOnly         :: Maybe Bool  -- ^ false,           // Present and set to true if the set was only released online
   , _SetObject_booster            :: Maybe MagicBoosterObject  -- ^ [ "rare", ... ], // Booster contents for this set, see below for details
   , _SetObject_cards              :: [CardObject]   -- ^ [ {}, {}, {}, ... ]  
-  } deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable)
+  } deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable, Binary )
 instance FromJSON SetObject where parseJSON = parseJSON_TypePrefix
 
 -- | see 'MagicBoosterSlotObject' 
@@ -66,7 +79,7 @@ type MagicBoosterObject = [MagicBoosterSlotObject]
 data MagicBoosterSlotObject 
     = MagicBoosterSlotObjectSingle   Text 
     | MagicBoosterSlotObjectMultiple [Text] 
-  deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable)
+  deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable, Binary )
 instance FromJSON MagicBoosterSlotObject  where parseJSON = genericParseJSON defaultOptions{ sumEncoding = UntaggedValue } 
 
 data CardObject = CardObject 
@@ -110,7 +123,7 @@ data CardObject = CardObject
   , _CardObject_legalities    :: Maybe [CardFormatLegalityObject]
   , _CardObject_source        :: Maybe Text 
   }
-  deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable)
+  deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable, Binary )
 instance FromJSON CardObject where parseJSON = parseJSON_TypePrefix
 
 {-| 
@@ -120,16 +133,16 @@ data CardForeignPrintingObject = CardForeignPrintingObject
   { _CardForeignPrintingObject_language     :: Text 
   , _CardForeignPrintingObject_name         :: Text 
   , _CardForeignPrintingObject_multiverseid :: Maybe Natural 
-  } deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable)
+  } deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable, Binary )
 instance FromJSON CardForeignPrintingObject where parseJSON = parseJSON_TypePrefix
 
 {-| 
 
 -}
 data CardRulingObject = CardRulingObject 
-  { _CardRulingObject_date :: Text 
+  { _CardRulingObject_date :: Text -- NOTE time-UTCTime / time-Day / etc have no Generic instance
   , _CardRulingObject_text :: Text 
-  } deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable)
+  } deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable, Binary )
 instance FromJSON CardRulingObject where parseJSON = parseJSON_TypePrefix
   
 {-| 
@@ -138,6 +151,8 @@ instance FromJSON CardRulingObject where parseJSON = parseJSON_TypePrefix
 data CardFormatLegalityObject = CardFormatLegalityObject 
   { _CardFormatLegalityObject_format   :: Text 
   , _CardFormatLegalityObject_legality :: Text 
-  } deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable)
+  } deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable, Binary )
 instance FromJSON CardFormatLegalityObject where parseJSON = parseJSON_TypePrefix
+
+--------------------------------------------------------------------------------
 
