@@ -195,8 +195,11 @@ type MagicCard = Value
 rCardNames_example :: Traversal' MagicSet T.Text -- MagicCard   
 rCardNames_example = (key "LEA" . key "cards" . values . key "name" . _String )
 -- rCardNames = (key "lea" . key "cards" . _Object . key "name")
- 
-{-| filter sets for validity. 
+
+rCardText :: Traversal' MagicCard T.Text
+rCardText = key "text" . _String 
+
+  {-| filter sets for validity. 
 for each valid set, for each of its cards, pair it it's collectors number. 
 
 -}
@@ -221,6 +224,13 @@ parseCards b = eitherDecode b
 
 indexCards :: B.ByteString -> Either String (M.Map T.Text Value)
 indexCards b = eitherDecode b <&> (M.mapKeys T.toCaseFold >>> M.filter (const True)) 
+
+flattenCardsFromSets :: B.ByteString -> Either String [Value]
+flattenCardsFromSets s = do
+  sets' <- indexSets s -- eitherDecode s
+  -- T.toCaseFold
+  return $ M.elems sets'
+
 
 ---
 

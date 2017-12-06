@@ -164,14 +164,29 @@ CardFormatLegalityObject =
 -}
 
 module Card.Types where
-import Card.Extra
 
-import Prelude.Spiros() 
+import Card.Extra
+import Prelude() 
 
 import Data.List.NonEmpty 
 -- TODO import Data.Time
 -- import qualified Data.Text as T
 import Data.Functor.Identity
+import Data.Either 
+-- import Data.Coerce 
+
+
+{-| 
+
+-}
+newtype Knowable a = Unknown { fromUnknown :: (Either Text a) } 
+
+renowned :: [Knowable a] -> [a] 
+renowned = fmap fromUnknown > rights 
+-- renowned us = rights (coerce us)
+-- renowned = coerce > rights 
+-- = mapMaybe (fromUnknown > either (const Nothing) id) 
+
 
 --------------------------------------------------------------------------------
 
