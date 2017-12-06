@@ -13,6 +13,7 @@ extra-deps:
 # - prettyprinter-1.1.1
 - lens-aeson-1.0.2
 - generic-lens-0.4.1.0
+- unification-fd-0.10.0.1
 
 # resolver: lts-9.12
 # compiler: ghc-8.0.2

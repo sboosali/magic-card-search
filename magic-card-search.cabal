@@ -81,6 +81,7 @@ library
                  Card.Types
                  Card.Core	
                  Card.Schema 
+                 Card.Record
 -- other-modules:
                  Card.Extra
                  Card.Example
