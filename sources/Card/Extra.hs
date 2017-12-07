@@ -21,6 +21,13 @@ import Data.Text()
 import GHC.Generics  
 import GHC.TypeLits(KnownSymbol, symbolVal) 
 
+--------------------------------------------------------------------------------
+
+concatenateA :: (Applicative f, Traversable t) => (a -> f [b]) -> t a -> f [b]
+concatenateA f = traverse f >>> fmap concat -- join 
+
+--------------------------------------------------------------------------------
+
 {-| constrain a type @a@ to be datatype (@data@ or @newtype@). 
 
 only @a@ and @name@ are relevant. 

@@ -3,23 +3,36 @@
 {-# LANGUAGE DataKinds, ScopedTypeVariables, TypeApplications #-}
 
 module Card.Schema where 
-import Card.Extra
+import Card.Extra -- hiding (ByteString)  
 
+import Data.Aeson (eitherDecode) 
 import Data.Aeson.Types (FromJSON(..),Options(..), SumEncoding(..), defaultOptions, genericParseJSON) 
 
 -- import Data.Generics.Product 
 -- import qualified Control.Lens as L 
 
-import qualified Data.Binary as B 
-import Data.Binary (Binary) 
+import qualified Data.Binary as Binary 
+import Data.Binary (Binary)
+-- import qualified Data.ByteString.Lazy as B
+import Data.ByteString.Lazy (ByteString) 
+
+--------------------------------------------------------------------------------
 
 -- test theName = L.set (field @"_SetObject_name") theName 
 
 persistSetsObject :: FilePath -> SetsObject -> IO ()
-persistSetsObject s o = B.encodeFile s o
+persistSetsObject s o = Binary.encodeFile s o
 
 restoreSetsObject :: FilePath -> IO (SetsObject)
-restoreSetsObject s = B.decodeFile s 
+restoreSetsObject s = Binary.decodeFile s
+
+--------------------------------------------------------------------------------
+
+-- | @= 'eitherDecode' @ 
+pSetsObject :: ByteString -> Either String SetsObject
+pSetsObject = eitherDecode
+
+--------------------------------------------------------------------------------
 
 {-| 
 

@@ -14,6 +14,7 @@ extra-deps:
 - lens-aeson-1.0.2
 - generic-lens-0.4.1.0
 - unification-fd-0.10.0.1
+- frisby-0.2.1
 
 # resolver: lts-9.12
 # compiler: ghc-8.0.2

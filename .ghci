@@ -1,0 +1,72 @@
+-- show type of evaluated expressions
+:set +t
+
+-- enable multiline with :{ ... :}
+:set +m
+
+-- my custom extensions 
+:set -XAutoDeriveTypeable
+:set -XDeriveDataTypeable
+:set -XDeriveGeneric
+:set -XDeriveFunctor
+:set -XDeriveFoldable
+:set -XDeriveTraversable
+:set -XLambdaCase 
+:set -XEmptyCase
+:set -XTypeOperators
+:set -XPostfixOperators
+:set -XViewPatterns 
+:set -XBangPatterns
+:set -XKindSignatures
+:set -XNamedFieldPuns 
+:set -XRecordWildCards
+:set -XTupleSections
+:set -XMultiWayIf 
+:set -XDoAndIfThenElse
+:set -XEmptyDataDecls
+:set -XMultiParamTypeClasses 
+:set -XFlexibleContexts
+:set -XFlexibleInstances
+-- :set -XTypeFamilies            -- .ghci warns something
+:set -XFunctionalDependencies
+:set -XScopedTypeVariables 
+:set -XStandaloneDeriving
+
+-- convenient extensions 
+:set -XOverloadedStrings
+:set -XOverloadedLists
+:set -XTupleSections 
+
+-- standard modules 
+import GHC.Generics    (Generic)
+import Data.Data       (Data)
+import Data.Function   ((&),on)
+import Data.Foldable   (traverse_)
+import Control.Arrow   ((>>>),(<<<))
+import Data.Set        (Set)
+import Data.Map        (Map)
+import Numeric.Natural (Natural)
+import Data.Proxy      (Proxy(..))
+import Control.Monad.IO.Class (MonadIO(..))
+import Control.Applicative
+
+-- common modules 
+:set -package data-default-class 
+import Data.Hashable   (Hashable(..))
+import Control.DeepSeq (NFData(..))
+import Data.Semigroup  (Semigroup(..))
+-- import Safe            
+import qualified Data.Text.Lazy as TL
+import qualified Data.Text      as TS
+import Data.Default.Class (Default(..))
+
+-- renaming 
+type LazyText   = TL.Text
+type StrictText = TS.Text
+-- type LazyBytestring   = BL.Bytestring
+-- type StrictBytestring = BS.Bytestring
+
+-- macro
+-- :def hoogle \str -> return $ ":! hoogle --count=15 \"" ++ str ++ "\""
+-- let pasteCode_loop = do { l <- getLine; if l == "\^D" then return () else do appendFile "temporary.hs" (l++"\n"); loop }
+-- :def pasteCode (\_ -> pasteCode_loop >> return ":load temporary.hs")

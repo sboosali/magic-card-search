@@ -146,6 +146,9 @@ library
             --  , composite-base 
             --  , aeson-better-errors
 
+
+             , frisby >=0.2.1
+
 executable example-magic-card-search
  hs-source-dirs:      executables
  main-is:             Main.hs

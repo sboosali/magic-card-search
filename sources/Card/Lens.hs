@@ -1,5 +1,16 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module Card.Lens where
-import Card.Types
+import Card.Extra (concatenateA) 
+import Card.Schema 
 import Control.Lens (makeLenses) 
 
-makeLenses ''CardObject 
+concatenateA makeLenses
+  [ ''SetsObject 
+  , ''SetObject 
+  , ''CardObject
+  , ''MagicBoosterSlotObject 
+  , ''CardForeignPrintingObject
+  , ''CardRulingObject
+  , ''CardFormatLegalityObject
+  ]

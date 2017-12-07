@@ -145,7 +145,7 @@ mainGetCards = do
  readUntilEmpty $ \t -> do
    let ds = findCardsByText cs t
    let es = ds & fmap T.unpack & zip [1::Int ..]
-   let pp = traverse_ (\(i,c) -> print i >> putStr " " >> putStrLn c)
+   let pp = traverse_ (\(i,c) -> putStr (show i) >> putStr " " >> putStrLn c)
    pp es
    putStrLn""
 
@@ -161,13 +161,26 @@ doesCardHaveText q _c@(n,t) = if T.isInfixOf q t then Just n else Nothing
 --   k = t & T.toCaseFold & T.words & T.unwords 
 --   v = M.lookup k m
 
-asCardNameTextPairs s = cs
+asCardNameTextPairs s = ds
   where
-  cs' = s ^.. members . key "cards" . _Array . traverse . (runFold ((,) <$> Fold (key_Object "name" . _String) <*> Fold (key_Object "text" . _String)))
-  cs = cs' & each . both %~ T.toCaseFold
+  cs = s ^.. members . key "cards" . _Array . traverse . (runFold ((,) <$> Fold (key_Object "name" . _String) <*> Fold (key_Object "text" . _String)))
+  ds = cs & each . both %~ T.toCaseFold
 
 key_Object :: TS.Text -> Traversal' Value Value
 key_Object = key
+
+{-
+
+let ds = (cs ^.. traverse . traverse . (runFold ((,,) <$> Fold (key_Object "name" . _String) <*> Fold (key_Object "id" . _String) <*> Fold (key_Object "subtypes" . _Array)))) 
+ ds & each . _3 . each %~ (preview  _String) 
+[("Scathe Zombies","571e2f42fa8092562bc1108e87330641eb054ab1",[Just "Zombie"])]
+it :: [(TS.Text, TS.Text, Data.Vector.Vector (Maybe TS.Text))]
+
+es = ds & each . _3 . each %~ preview  _String
+
+
+
+-}
 
 -- ("hello","world","!!!")^.runGetter ((,) <$> Getter _2 <*> Getter (_1.to(length)))
 
