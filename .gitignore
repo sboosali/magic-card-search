@@ -1,5 +1,7 @@
 data/images/ 
+data/frames/ 
 tests/samples/ 
+output/
 
 # my
 temporary/ 

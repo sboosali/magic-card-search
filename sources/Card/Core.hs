@@ -97,6 +97,14 @@ Object (fromList [("mciNumber",String "229"),("layout",String "normal"),("text",
 -}
 
 
+readSetsObjectDefault  :: IO SetsObject
+readSetsObjectDefault = readSetsObject defaultSetsFile
+
+readSetsObject :: FilePath -> IO SetsObject 
+readSetsObject p = do
+  s <- B.readFile p
+  x <- decoded s -- pSetsObject s
+  return x
 
 {-| magiccards.info
 

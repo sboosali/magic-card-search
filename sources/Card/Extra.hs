@@ -16,14 +16,22 @@ import Data.Aeson.Types (Options(..))
 import qualified Data.Aeson as J 
 import qualified Data.Aeson.Types  as J
 
+import Data.ByteString.Lazy (ByteString) 
 import qualified Data.Text as T
 import Data.Text() 
 import GHC.Generics  
 import GHC.TypeLits(KnownSymbol, symbolVal) 
+import Control.Monad.Fail (MonadFail)
 
 --------------------------------------------------------------------------------
 
-concatenateA :: (Applicative f, Traversable t) => (a -> f [b]) -> t a -> f [b]
+decoded  :: (MonadFail m, J.FromJSON a) => ByteString -> m a
+decoded  = J.eitherDecode > either fail return 
+
+--------------------------------------------------------------------------------
+
+-- concatenateA :: (Applicative f, Traversable t) => (a -> f [b]) -> t a -> f [b]
+concatenateA :: (Applicative f) => (a -> f [b]) -> [a] -> f [b]
 concatenateA f = traverse f >>> fmap concat -- join 
 
 --------------------------------------------------------------------------------
