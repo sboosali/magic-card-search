@@ -82,6 +82,7 @@ library
                  Card.Core	
                  Card.Schema 
                  Card.Record
+                 Card.Download 
 -- other-modules:
                  Card.Extra
                  Card.Example
@@ -146,9 +147,12 @@ library
             --  , composite-base 
             --  , aeson-better-errors
 
-
              , frisby >=0.2.1
 
+             , zlib
+             , tar
+
+ 
 executable example-magic-card-search
  hs-source-dirs:      executables
  main-is:             Main.hs
@@ -161,6 +165,26 @@ executable example-magic-card-search
     base
   , magic-card-search
 
+ 
+executable get-magic-cards-json 
+ hs-source-dirs:      executables
+ main-is:             Unzip.hs
+
+ default-language:    Haskell2010
+ ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
+ ghc-options:         -fno-warn-missing-signatures -fno-warn-dodgy-exports -fno-warn-unused-imports
+
+ build-depends:
+    base
+  , zlib
+  , tar
+  , bytestring
+  , http-client 
+  , http-client-tls
+  , http-types 
+  , wreq
+  , lens
+  , lens-aeson
 
 -- $ stack test doctest
 test-suite doctest
