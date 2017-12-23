@@ -178,6 +178,7 @@ executable get-magic-cards-json
     base
   , zlib
   , tar
+  , zip-archive
   , bytestring
   , http-client 
   , http-client-tls
