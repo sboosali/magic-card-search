@@ -1,9 +1,11 @@
-{-# LANGUAGE TypeApplications, RecordWildCards, NoMonomorphismRestriction #-}
+{-# LANGUAGE PackageImports, TypeApplications, RecordWildCards, NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.Function
 import Data.Foldable
 import Control.Arrow
+
+import qualified "zip-archive" Codec.Archive.Zip as ZIP
 
 import qualified Codec.Compression.GZip     as GZIP    -- GZIP format 
 import qualified Codec.Compression.Zlib     as ZLIB    -- ZLIB format 
@@ -12,7 +14,7 @@ import qualified Codec.Compression.Zlib.Raw as Z
 
 import qualified Data.ByteString.Lazy       as B
 import qualified Data.ByteString.Lazy.Char8 as B8
--- import Data.ByteString.Lazy (ByteString)
+import Data.ByteString.Lazy (ByteString)
 
 import qualified Network.HTTP.Client       as HTTP
 import qualified Network.HTTP.Client.TLS   as HTTPS
@@ -185,10 +187,6 @@ mainWith url = do
 
 
 
--}
-
---------------------------------------------------------------------------------
-
 main' = do
   urls & traverse_ mainWith
   where
@@ -241,3 +239,71 @@ mainWith (shouldDecompress,url) =  handle printingSomeException $ do
 
   -- shouldDecompress & maybe nothing doDecompress 
   doDecompress `traverse_` shouldDecompress
+
+
+
+
+-}
+
+--------------------------------------------------------------------------------
+
+main' = do
+  files & traverse_ mainWith'
+--  urls  & traverse_ mainWith
+
+  where
+  files =
+    [ (unzipArchive, "ZIP") -: "data/zipped/AllSets-x.json.zip" 
+    ]
+  -- urls = 
+  --   [ Nothing                    -: "http://httpbin.org/get"
+  --   , Just (unzipArchive, "ZIP") -: "http://httpbin.org/deflate" 
+  --   , Just (unzipArchive, "ZIP") -: "http://httpbin.org/gzip" 
+  --   ]
+
+
+
+mainWith' ((_decompress,_method),file) =  handle printingSomeException $ do
+  putStrLn ""
+  putStrLn "------------------------------------------"
+  putStrLn $ "[reading " ++ file ++ " ...]"
+  b <- B.readFile file 
+    
+  putStrLn ""
+  putStrLn $ "[decompressing with "<> _method <>"...]"
+  let d = _decompress b
+  let l = B.length d
+  B8.putStrLn $ "decompressed: \n" <> d
+  putStrLn    $ "length:       " <> show l 
+
+mainWith (shouldDecompress,url) =  handle printingSomeException $ do
+  putStrLn ""
+  putStrLn "------------------------------------------"
+  pause 50
+  putStrLn $ "[requesting " ++ url ++ " ...]"
+  manager <- HTTP.newManager HTTP.defaultManagerSettings
+  request <- HTTP.parseRequest url
+  response <- HTTP.httpLbs request manager
+
+  let s = response & HTTP.responseStatus & HTTP.statusCode 
+  let b = response & HTTP.responseBody
+
+  putStrLn    $ "status code:  " ++ show s
+  putStrLn ""
+  B8.putStrLn $ "body:         \n" <> b 
+-- B.writeFile "data/zipped/httpbin_deflate.zip" b
+
+  let doDecompress (_decompress,_method) = do
+          putStrLn ""
+          putStrLn $ "[decompressing with "<> _method <>"...]"
+          let d = _decompress b
+          let l = B.length d
+          B8.putStrLn $ "decompressed: \n" <> d
+          putStrLn    $ "length:       " <> show l 
+
+  -- shouldDecompress & maybe nothing doDecompress 
+  doDecompress `traverse_` shouldDecompress
+
+unzipArchive :: ByteString -> ByteString
+unzipArchive = ZIP.toArchive >>> ZIP.zEntries >>> fmap ZIP.fromEntry >>> B.concat
+
