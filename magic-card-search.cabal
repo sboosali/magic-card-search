@@ -25,13 +25,14 @@ cabal-version:       >=1.10
 -- https://wiki.haskell.org/Package_versioning_policy
 -- "A.B is known as the major version number, and C the minor version number."
 
+----------------------------------------
+
 extra-source-files:
   README.md
   .gitignore
   .travis.yml
   HLint.hs
   stack.yaml
-
 
 data-files:
   data/AllCards.json 
@@ -46,14 +47,18 @@ data-files:
   data/version-full.json 
   data/SetList.json
 
+----------------------------------------
 
 source-repository head
   type:     git
   location: https://github.com/sboosali/magic-card-search
 
+----------------------------------------
 
 library
+
  hs-source-dirs:      sources
+
  default-language:    Haskell2010
  ghc-options:
   -Wall
@@ -83,6 +88,7 @@ library
                  Card.Schema 
                  Card.Record
                  Card.Download 
+                 Card.Lens
 -- other-modules:
                  Card.Extra
                  Card.Example
@@ -91,6 +97,11 @@ library
                  Paths_magic_card_search
 -- autogen-modules: 
 --                 Paths_magic_card_search
+
+-- provided by their namesake haskell packages
+ -- extra-libraries: 
+ --   z
+ --   tar
 
  build-depends:
                base >=4.7 && <5
@@ -152,6 +163,7 @@ library
              , zlib
              , tar
 
+----------------------------------------
  
 executable example-magic-card-search
  hs-source-dirs:      executables
@@ -165,8 +177,23 @@ executable example-magic-card-search
     base
   , magic-card-search
 
+----------------------------------------
  
-executable get-magic-cards-json 
+executable download-mtg-images
+ hs-source-dirs:      executables
+ main-is:             DownloadImages.hs
+
+ default-language:    Haskell2010
+ ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
+ ghc-options:         -fno-warn-missing-signatures -fno-warn-dodgy-exports -fno-warn-unused-imports
+
+ build-depends:
+    base
+  , magic-card-search
+
+----------------------------------------
+
+executable get-mtg-cards-json 
  hs-source-dirs:      executables
  main-is:             Unzip.hs
 
@@ -186,6 +213,8 @@ executable get-magic-cards-json
   , lens
   , lens-aeson
 
+----------------------------------------
+
 -- $ stack test doctest
 test-suite doctest
  hs-source-dirs:      tests
@@ -199,7 +228,6 @@ test-suite doctest
     base
   , magic-card-search
   , doctest
-
 
 -- $ stack test unittest
 test-suite unittest
@@ -221,6 +249,7 @@ test-suite unittest
   -- , tasty
   -- , tasty-quickcheck
 
+----------------------------------------
 
 -- $ stack bench
 benchmark command
@@ -236,6 +265,8 @@ benchmark command
   , magic-card-search
   , criterion
   , deepseq
+
+----------------------------------------
 
 -- -- currently, fltk can't link on Windows with ghci
 -- Executable mtg-text-editor
@@ -253,3 +284,5 @@ benchmark command
 --    ghc-Options: "-optl-Wl,-lfltkc"
 --   if !os(darwin) && !os(windows)
 --     ghc-Options: -pgml g++ "-optl-Wl,--allow-multiple-definition" "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"
+
+----------------------------------------
