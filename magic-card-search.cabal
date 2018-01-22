@@ -86,6 +86,7 @@ library
                  Card.Types
                  Card.Core	
                  Card.Schema 
+                 Card.JSONSchema
                  Card.Record
                  Card.Download 
                  Card.Lens
@@ -143,8 +144,6 @@ library
 --              , interpolatedstring-perl6
 --              , wl-pprint-text
              , text
-             , aeson
-             , lens-aeson
              , show-prettyprint
              
              , async
@@ -152,7 +151,11 @@ library
              , http-client
              , http-client-tls
              
-             , vinyl 
+             , vinyl
+             , schematic
+             , aeson
+             , lens-aeson
+
              , generic-lens
             --  , composite-aeson
             --  , composite-base 

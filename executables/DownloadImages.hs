@@ -9,3 +9,5 @@ import Control.Concurrent
 
 ------------------------------------------
 
+main = do
+  print "DownloadImages"

@@ -8,8 +8,9 @@ let
       , containers, criterion, deepseq, directory, doctest, enumerate
       , frisby, generic-lens, hashable, hspec, http-client
       , http-client-tls, http-types, lens, lens-aeson, QuickCheck
-      , semigroups, show-prettyprint, spiros, stdenv, tar, text, time
-      , unordered-containers, vector, vinyl, wreq, zlib
+      , schematic, semigroups, show-prettyprint, spiros, stdenv, tar
+      , text, time, unordered-containers, vector, vinyl, wreq
+      , zip-archive, zlib
       }:
       mkDerivation {
         pname = "magic-card-search";
@@ -21,12 +22,12 @@ let
         libraryHaskellDepends = [
           aeson async base binary bytestring containers deepseq directory
           enumerate frisby generic-lens hashable http-client http-client-tls
-          lens lens-aeson semigroups show-prettyprint spiros tar text time
-          unordered-containers vector vinyl zlib
+          lens lens-aeson schematic semigroups show-prettyprint spiros tar
+          text time unordered-containers vector vinyl zlib
         ];
         executableHaskellDepends = [
           base bytestring http-client http-client-tls http-types lens
-          lens-aeson tar wreq zlib
+          lens-aeson tar wreq zip-archive zlib
         ];
         testHaskellDepends = [ base doctest hspec QuickCheck ];
         benchmarkHaskellDepends = [ base criterion deepseq ];
