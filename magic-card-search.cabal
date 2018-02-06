@@ -35,6 +35,13 @@ extra-source-files:
   stack.yaml
 
 data-files:
+  data/json/AllSets-x.json
+  data/json/RealSets-x.json
+  data/json/RealSets-y.json
+  data/json/RIXSets-y.json
+  data/json/RIXSets-z.json
+
+--TODO del?
   data/AllCards.json 
   data/SomeCards.json
   data/NoCards.json
@@ -166,8 +173,8 @@ library
              , zlib
              , tar
 
-----------------------------------------
- 
+-- ----------------------------------------
+
 executable example-magic-card-search
  hs-source-dirs:      executables
  main-is:             Main.hs
@@ -269,24 +276,5 @@ benchmark command
   , magic-card-search
   , criterion
   , deepseq
-
-----------------------------------------
-
--- -- currently, fltk can't link on Windows with ghci
--- Executable mtg-text-editor
---   Main-Is: texteditor-simple.hs
---   Hs-Source-Dirs: sources
---   Build-Depends:
---     base == 4.*,
---     fltkhs >= 0.5.4.1
---   default-language: Haskell2010
---   ghc-Options: -Wall -threaded
---   if os(windows)
---    ghc-Options: -optl-mwindows
---    ghc-Options: -pgml g++ "-optl-Wl,--allow-multiple-definition" "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"
---   if os(darwin)
---    ghc-Options: "-optl-Wl,-lfltkc"
---   if !os(darwin) && !os(windows)
---     ghc-Options: -pgml g++ "-optl-Wl,--allow-multiple-definition" "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"
 
 ----------------------------------------

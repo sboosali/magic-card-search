@@ -168,10 +168,11 @@ module Card.Types where
 import Card.Extra
 import Prelude() 
 
-import Data.List.NonEmpty 
+--import Data.List.NonEmpty 
+--import Data.Functor.Identity
+
 -- TODO import Data.Time
 -- import qualified Data.Text as T
-import Data.Functor.Identity
 import Data.Either 
 -- import Data.Coerce 
 
@@ -541,6 +542,8 @@ data CardNumber
   | CardWildcardNumber Integer -- ^ the integer represents the modifier: @1@ is @\*+1@, @0@ is just @\*@. e.g. Tarmogoyf has a power of  @'CardWildcardNumber' 0@ and a toughness of @'CardWildcardNumber' 1@. 
   deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable) 
 
+----------------------------------------
+
 {-| unifies the following, with invariants:  
 
 * '_CardObject_supertypes'
@@ -589,6 +592,7 @@ data CardSubtype
   | UnknownCardSubtype Text 
   deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable)
 
+----------------------------------------
 
 {-| 
 
@@ -658,6 +662,8 @@ data CardLayout = CardLayout Text
 data CardWatermark = CardWatermark Text 
   deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable)
 
+----------------------------------------
+
 {-| 
 
 -}
@@ -705,6 +711,8 @@ data MagicCardsInfoIdentifier = MagicCardsInfoIdentifier Text
 data CardSetCode = CardSetCode Text 
   deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable)
 
+----------------------------------------
+
 {-| 
 
 -}
@@ -736,6 +744,8 @@ data CardFormatLegality = CardFormatLegality
 data KnownMagicFormat = KnownMagicFormat Text -- TODO 
   deriving (Show,Read,Eq,Ord,Data,Generic,NFData,Hashable)
 
+----------------------------------------
+
 {-| 
 
 -}
@@ -764,3 +774,5 @@ data KnownCardType
     deriving (Show,Read,Eq,Ord,Enum,Bounded,Generic,Data,NFData,Hashable)
 
 type KnownCardSubtype = Text -- TODO 
+
+----------------------------------------

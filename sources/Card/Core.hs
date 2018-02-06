@@ -1,6 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude, RecordWildCards, OverloadedStrings, TypeApplications #-}
+
+{-|
+-}
 module Card.Core where
-import Card.Extra
+import Card.Extra hiding (handle)
 import Card.Types
 import Card.Schema 
 import Paths_magic_card_search 
@@ -26,6 +29,8 @@ import Network.HTTP.Client.TLS
 import Control.Exception(handle) 
 
 {-| 
+
+<https://mtgjson.com/documentation.html>
 
 @
 {
