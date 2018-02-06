@@ -160,12 +160,12 @@ type ENUM ss = SchemaText '[TEnum ss]
 {-| see 'REGEX'
 -}  
 type REGEX_IF strictness s =
-  IF_STRICT strictness (REGEX s) TEXT
+  TEXT_UNLESS strictness (REGEX s)
 
 {-| see 'ENUM'
 -}  
 type ENUM_IF strictness ss =
-  IF_STRICT strictness (ENUM ss) TEXT
+   TEXT_UNLESS strictness (ENUM ss) 
 
 
 {-| see 'TEXT'
@@ -202,7 +202,8 @@ type IF_STRICT strictness strict loose =
 
 {-| like 'UNLESS', but with a custom boolean kind, 'Strictness'.
 -}
-type UNLESS_STRICT strictness loose strict =  IF_STRICT strictness strict loose
+type UNLESS_STRICT strictness loose strict =
+  IF_STRICT strictness strict loose
 
 {-| whether the @strictness@ is 'Strict'. -}
 type family StrictnessToBoolean strictness where

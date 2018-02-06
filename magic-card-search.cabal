@@ -36,23 +36,7 @@ extra-source-files:
 
 data-files:
   data/json/AllSets-x.json
-  data/json/RealSets-x.json
-  data/json/RealSets-y.json
-  data/json/RIXSets-y.json
-  data/json/RIXSets-z.json
-
---TODO del?
-  data/AllCards.json 
-  data/SomeCards.json
-  data/NoCards.json
-
-  data/AllSets-x.json
-  data/SomeSets-x.json
-  data/OneSet-x.json
-  data/OneCard-x.json
-
-  data/version-full.json 
-  data/SetList.json
+  data/json/version-full.json 
 
 ----------------------------------------
 
