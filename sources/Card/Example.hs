@@ -5,6 +5,9 @@
 
 module Card.Example where
 import Card
+
+import qualified Card.JSONSchema
+
 import System.Environment
 import Data.Function((&)) 
 -- import qualified Data.Map as M 
@@ -22,12 +25,15 @@ import Data.Aeson.Lens
 import Data.Maybe 
 -- import qualified Data.Vector as V 
 import Control.Arrow((>>>)) 
-import Prelude.Spiros 
+import Prelude.Spiros
 
-printAllSets = getSetsDefault >>= B8.putStrLn
+----------------------------------------
 
-printAllCards = getCardsDefault >>= B8.putStrLn
+mainWith _ = do
+ putStrLn ""
+ Card.JSONSchema.main
 
+----------------------------------------
 
 {-|
 @
@@ -115,9 +121,11 @@ someMCICardIdentifiers = map (defaultMCICardIdentifier "xln") [24..284 ] -- [1..
 -- TODO some, like double-faced cards, don't have numerical collector numbers. for example, there is no 22, only 22a and 22b
 -- get the real collectors numbers from the file  
 
-mainWith _ = do
- putStrLn ""
- mainGetCards >>= print
+--mainWith _ = do
+-- putStrLn ""
+-- Card.JSONSchema.main
+ 
+ --TODO mainGetCards >>= print
 
     -- print $ exampleDecoding1 
     -- print $ exampleDecoding2 
@@ -131,9 +139,14 @@ mainWith _ = do
 --  putStrLn ""
 --  let s :: Either String SetsObject = eitherDecode' bs
 --  print s
+---------------------------------------
+
+printAllSets = getSetsDefault >>= B8.putStrLn
+
+printAllCards = getCardsDefault >>= B8.putStrLn
 
 mainGetCards = do
- o <- readSetsObjectDefault
+ _o <- readSetsObjectDefault
  s <- getSetsDefault -- getOneSet
  putStrLn ""
 -- print$ s ^.. members . key "cards" . _Array . traverse . key "text" . _String

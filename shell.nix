@@ -96,6 +96,8 @@ let
 
       spiros = self.callPackage ../spiros {};
 
+      protolude = self.callHackage "protolude" "0.2.1" {};
+
       # exception-transformers = hs.dontCheck super.exception-transformers;
       #       # Setup: Encountered missing dependencies:
       #       # HUnit >=1.2 && <1.6
@@ -136,6 +138,8 @@ let
   
       emacs
       git
+
+      jq
 
     ];
 
