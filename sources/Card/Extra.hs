@@ -23,18 +23,18 @@ import GHC.Generics
 import GHC.TypeLits(KnownSymbol, symbolVal) 
 import Control.Monad.Fail (MonadFail)
 
---------------------------------------------------------------------------------
+----------------------------------------
 
 decoded  :: (MonadFail m, J.FromJSON a) => ByteString -> m a
 decoded  = J.eitherDecode > either fail return 
 
---------------------------------------------------------------------------------
+----------------------------------------
 
 -- concatenateA :: (Applicative f, Traversable t) => (a -> f [b]) -> t a -> f [b]
 concatenateA :: (Applicative f) => (a -> f [b]) -> [a] -> f [b]
 concatenateA f = traverse f >>> fmap concat -- join 
 
---------------------------------------------------------------------------------
+----------------------------------------
 
 {-| constrain a type @a@ to be datatype (@data@ or @newtype@). 
 

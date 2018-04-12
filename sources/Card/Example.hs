@@ -33,6 +33,9 @@ mainWith _ = do
  putStrLn ""
  Card.JSONSchema.main
 
+ putStrLn ""
+ mainGetCards >>= print
+
 ----------------------------------------
 
 {-|

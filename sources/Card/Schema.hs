@@ -16,7 +16,7 @@ import Data.Binary (Binary)
 -- import qualified Data.ByteString.Lazy as B
 import Data.ByteString.Lazy (ByteString) 
 
---------------------------------------------------------------------------------
+----------------------------------------
 
 -- test theName = L.set (field @"_SetObject_name") theName 
 
@@ -26,13 +26,13 @@ persistSetsObject s o = Binary.encodeFile s o
 restoreSetsObject :: FilePath -> IO (SetsObject)
 restoreSetsObject s = Binary.decodeFile s
 
---------------------------------------------------------------------------------
+----------------------------------------
 
 -- | @= 'eitherDecode' @ 
 pSetsObject :: ByteString -> Either String SetsObject
 pSetsObject = eitherDecode
 
---------------------------------------------------------------------------------
+----------------------------------------
 
 {-| 
 
@@ -167,5 +167,5 @@ data CardFormatLegalityObject = CardFormatLegalityObject
   } deriving (Show,Read,Eq,Ord,Generic,Data,NFData,Hashable, Binary )
 instance FromJSON CardFormatLegalityObject where parseJSON = parseJSON_TypePrefix
 
---------------------------------------------------------------------------------
+----------------------------------------
 
